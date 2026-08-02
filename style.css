@@ -1,0 +1,455 @@
+/* ==========================================================
+   Базовые переменные
+   ========================================================== */
+:root {
+  --bg: #0a0a0a;
+  --bg-elevated: #141414;
+  --bg-card: #121212;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.14);
+  --text: #f5f5f2;
+  --text-secondary: rgba(245, 245, 242, 0.62);
+  --text-tertiary: rgba(245, 245, 242, 0.4);
+  --accent: #5fd9a8;
+  --accent-dim: rgba(95, 217, 168, 0.14);
+  --radius: 18px;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI",
+    Roboto, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.5;
+}
+
+.container {
+  width: 100%;
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.container--narrow {
+  max-width: 700px;
+}
+
+/* ==========================================================
+   HERO
+   ========================================================== */
+.hero {
+  position: relative;
+  min-height: 100svh;
+  display: flex;
+  align-items: flex-end;
+  background-color: #000;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+@media (min-width: 700px) {
+  .hero {
+    background-attachment: fixed;
+  }
+}
+
+.hero__scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.15) 0%,
+    rgba(0, 0, 0, 0.1) 40%,
+    rgba(0, 0, 0, 0.75) 100%
+  );
+}
+
+.hero__content {
+  position: relative;
+  width: 100%;
+  padding: 0 24px 96px;
+  text-align: left;
+}
+
+.hero__name {
+  margin: 0 0 12px;
+  font-size: clamp(2.4rem, 8vw, 4.2rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+}
+
+.hero__tagline {
+  margin: 0;
+  max-width: 32ch;
+  font-size: clamp(1.05rem, 3vw, 1.3rem);
+  font-weight: 400;
+  color: rgba(245, 245, 242, 0.88);
+}
+
+.hero__scroll-hint {
+  position: absolute;
+  left: 50%;
+  bottom: 28px;
+  width: 22px;
+  height: 34px;
+  border: 1.5px solid rgba(245, 245, 242, 0.5);
+  border-radius: 12px;
+  transform: translateX(-50%);
+}
+
+.hero__scroll-hint::before {
+  content: "";
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  width: 3px;
+  height: 6px;
+  background: rgba(245, 245, 242, 0.8);
+  border-radius: 2px;
+  transform: translateX(-50%);
+  animation: scrollHint 1.8s var(--ease) infinite;
+}
+
+@keyframes scrollHint {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+  70% {
+    opacity: 0;
+    transform: translate(-50%, 10px);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, 10px);
+  }
+}
+
+/* ==========================================================
+   Секции — общее
+   ========================================================== */
+.section {
+  padding: 96px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.section--updates {
+  border-bottom: none;
+}
+
+.section__title {
+  margin: 0 0 40px;
+  font-size: clamp(1.7rem, 4vw, 2.4rem);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.section--why .section__title {
+  margin-bottom: 24px;
+}
+
+/* ==========================================================
+   Проза (текстовые блоки)
+   ========================================================== */
+.prose p {
+  margin: 0 0 20px;
+  font-size: clamp(1.05rem, 2.4vw, 1.2rem);
+  line-height: 1.7;
+  color: var(--text-secondary);
+}
+
+.prose p:last-child {
+  margin-bottom: 0;
+}
+
+/* ==========================================================
+   Прогресс-бар долга
+   ========================================================== */
+.progress {
+  margin-bottom: 48px;
+  padding: 28px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.progress__numbers {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.progress__paid {
+  font-size: clamp(1.6rem, 5vw, 2.2rem);
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: -0.01em;
+}
+
+.progress__of {
+  color: var(--text-tertiary);
+  font-size: 1rem;
+}
+
+.progress__goal {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.progress__track {
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.progress__fill {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--accent);
+  width: 0%;
+  transition: width 1s var(--ease);
+}
+
+.progress__percent {
+  margin-top: 10px;
+  font-size: 0.85rem;
+  color: var(--text-tertiary);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ==========================================================
+   Карточки (долги / цели)
+   ========================================================== */
+.cards {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  transition: border-color 0.3s var(--ease), transform 0.3s var(--ease);
+}
+
+.card:hover {
+  border-color: var(--border-strong);
+}
+
+.card__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.card__name {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.card__status {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 999px;
+  white-space: nowrap;
+  letter-spacing: 0.01em;
+}
+
+.card__status--in_progress {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-secondary);
+}
+
+.card__status--closed {
+  background: var(--accent-dim);
+  color: var(--accent);
+}
+
+.card--closed {
+  opacity: 0.72;
+}
+
+.card__row--amount {
+  margin-top: 16px;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.card__amount {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.card__amount-sub {
+  font-size: 0.85rem;
+  color: var(--text-tertiary);
+}
+
+.card__due {
+  margin-top: 14px;
+  font-size: 0.85rem;
+  color: var(--text-tertiary);
+}
+
+.card__category {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--accent);
+}
+
+.card__goal-title {
+  margin-top: 12px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.card__goal-desc {
+  margin: 8px 0 0;
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+/* ==========================================================
+   Лента обновлений
+   ========================================================== */
+.feed {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.feed__item {
+  display: flex;
+  gap: 20px;
+  padding: 20px 0;
+  border-top: 1px solid var(--border);
+}
+
+.feed__item:last-child {
+  padding-bottom: 0;
+}
+
+.feed__date {
+  flex: none;
+  width: 96px;
+  font-size: 0.85rem;
+  color: var(--text-tertiary);
+  font-variant-numeric: tabular-nums;
+  padding-top: 2px;
+}
+
+.feed__text {
+  font-size: 1.05rem;
+  color: var(--text);
+  line-height: 1.6;
+}
+
+/* ==========================================================
+   Футер
+   ========================================================== */
+.footer {
+  padding: 56px 0 64px;
+}
+
+.footer__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  text-align: center;
+}
+
+.footer__links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+}
+
+.footer__link {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: color 0.2s var(--ease);
+}
+
+.footer__link:hover {
+  color: var(--accent);
+}
+
+.footer__note {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--text-tertiary);
+}
+
+/* ==========================================================
+   Мобильная адаптация
+   ========================================================== */
+@media (max-width: 480px) {
+  .section {
+    padding: 64px 0;
+  }
+
+  .hero__content {
+    padding-bottom: 64px;
+  }
+
+  .cards {
+    grid-template-columns: 1fr;
+  }
+
+  .feed__item {
+    gap: 12px;
+  }
+
+  .feed__date {
+    width: 76px;
+    font-size: 0.78rem;
+  }
+}
+
+/* Уважение к настройке "меньше анимаций" */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .hero__scroll-hint::before {
+    animation: none;
+  }
+
+  .progress__fill {
+    transition: none;
+  }
+}

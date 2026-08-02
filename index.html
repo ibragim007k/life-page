@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Путь к нулю</title>
+<meta name="description" content="Личная страница о долге, целях и пути к нулю — открыто, без прикрас.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ===================== HERO ===================== -->
+  <section class="hero" id="hero">
+    <div class="hero__scrim"></div>
+    <div class="hero__content">
+      <h1 class="hero__name" id="hero-name"></h1>
+      <p class="hero__tagline" id="hero-tagline"></p>
+    </div>
+    <div class="hero__scroll-hint" aria-hidden="true"></div>
+  </section>
+
+  <main>
+
+    <!-- ===================== ПОЧЕМУ ===================== -->
+    <section class="section section--why" id="why">
+      <div class="container container--narrow">
+        <h2 class="section__title" id="why-title"></h2>
+        <div class="prose" id="why-text"></div>
+      </div>
+    </section>
+
+    <!-- ===================== ДОЛГИ ===================== -->
+    <section class="section section--debts" id="debts">
+      <div class="container">
+        <h2 class="section__title">Долги</h2>
+
+        <div class="progress">
+          <div class="progress__numbers">
+            <span class="progress__paid" id="progress-paid"></span>
+            <span class="progress__of">из</span>
+            <span class="progress__goal" id="progress-goal"></span>
+          </div>
+          <div class="progress__track">
+            <div class="progress__fill" id="progress-fill"></div>
+          </div>
+          <div class="progress__percent" id="progress-percent"></div>
+        </div>
+
+        <ul class="cards" id="debts-list"></ul>
+      </div>
+    </section>
+
+    <!-- ===================== ЦЕЛИ ===================== -->
+    <section class="section section--goals" id="goals">
+      <div class="container">
+        <h2 class="section__title">Цели</h2>
+        <ul class="cards" id="goals-list"></ul>
+      </div>
+    </section>
+
+    <!-- ===================== ОБНОВЛЕНИЯ ===================== -->
+    <section class="section section--updates" id="updates">
+      <div class="container container--narrow">
+        <h2 class="section__title">Обновления</h2>
+        <ul class="feed" id="updates-list"></ul>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===================== ФУТЕР ===================== -->
+  <footer class="footer">
+    <div class="container container--narrow footer__inner">
+      <nav class="footer__links" id="footer-links"></nav>
+      <p class="footer__note">Обновляется регулярно, вручную.</p>
+    </div>
+  </footer>
+
+  <script src="data.js"></script>
+  <script>
+    /* Рендер: этот блок только читает SITE_DATA и строит разметку.
+       Все значения — из data.js, здесь ничего не хардкодится. */
+
+    const fmtMoney = (n) => new Intl.NumberFormat("ru-RU").format(n) + " ₽";
+
+    const fmtDate = (iso) => {
+      const [y, m, d] = iso.split("-");
+      return `${d}.${m}.${y}`;
+    };
+
+    // ---- Hero ----
+    document.getElementById("hero-name").textContent = SITE_DATA.hero.name;
+    document.getElementById("hero-tagline").textContent = SITE_DATA.hero.tagline;
+    document.getElementById("hero").style.backgroundImage =
+      `linear-gradient(0deg, rgba(0,0,0,0.15), rgba(0,0,0,0.15)), url('${SITE_DATA.hero.backgroundImage}')`;
+
+    // ---- Почему ----
+    document.getElementById("why-title").textContent = SITE_DATA.why.title;
+    const whyText = document.getElementById("why-text");
+    SITE_DATA.why.paragraphs.forEach((p) => {
+      const el = document.createElement("p");
+      el.textContent = p;
+      whyText.appendChild(el);
+    });
+
+    // ---- Долги: прогресс ----
+    const { totalGoal, items: debtItems } = SITE_DATA.debts;
+    const totalRemaining = debtItems.reduce((sum, d) => sum + d.remaining, 0);
+    const totalPaid = Math.max(totalGoal - totalRemaining, 0);
+    const percent = Math.min(Math.round((totalPaid / totalGoal) * 100), 100);
+
+    document.getElementById("progress-paid").textContent = fmtMoney(totalPaid);
+    document.getElementById("progress-goal").textContent = fmtMoney(totalGoal);
+    document.getElementById("progress-percent").textContent = `${percent}%`;
+    document.getElementById("progress-fill").style.width = `${percent}%`;
+
+    // ---- Долги: карточки ----
+    const debtsList = document.getElementById("debts-list");
+    const statusLabel = { in_progress: "В процессе", closed: "Закрыт" };
+
+    debtItems.forEach((debt) => {
+      const li = document.createElement("li");
+      li.className = `card card--debt card--${debt.status}`;
+      li.innerHTML = `
+        <div class="card__row">
+          <span class="card__name">${debt.name}</span>
+          <span class="card__status card__status--${debt.status}">${statusLabel[debt.status]}</span>
+        </div>
+        <div class="card__row card__row--amount">
+          <span class="card__amount">${fmtMoney(debt.remaining)}</span>
+          <span class="card__amount-sub">из ${fmtMoney(debt.amount)}</span>
+        </div>
+        <div class="card__due">Срок: ${fmtDate(debt.dueDate)}</div>
+      `;
+      debtsList.appendChild(li);
+    });
+
+    // ---- Цели ----
+    const goalsList = document.getElementById("goals-list");
+    SITE_DATA.goals.forEach((goal) => {
+      const li = document.createElement("li");
+      li.className = "card card--goal";
+      li.innerHTML = `
+        <div class="card__row">
+          <span class="card__category">${goal.category}</span>
+        </div>
+        <div class="card__goal-title">${goal.title}</div>
+        <p class="card__goal-desc">${goal.description}</p>
+        <div class="card__due">К ${fmtDate(goal.targetDate)}</div>
+      `;
+      goalsList.appendChild(li);
+    });
+
+    // ---- Обновления ----
+    const updatesList = document.getElementById("updates-list");
+    SITE_DATA.updates.forEach((update) => {
+      const li = document.createElement("li");
+      li.className = "feed__item";
+      li.innerHTML = `
+        <span class="feed__date">${update.date}</span>
+        <span class="feed__text">${update.text}</span>
+      `;
+      updatesList.appendChild(li);
+    });
+
+    // ---- Футер ----
+    const footerLinks = document.getElementById("footer-links");
+    SITE_DATA.footer.links.forEach((link) => {
+      const a = document.createElement("a");
+      a.href = link.url;
+      a.textContent = link.label;
+      a.className = "footer__link";
+      a.target = "_blank";
+      a.rel = "noopener noreferrer";
+      footerLinks.appendChild(a);
+    });
+  </script>
+</body>
+</html>
