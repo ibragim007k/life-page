@@ -1,0 +1,366 @@
+:root {
+  --bg: #0a0a0a;
+  --panel: #131313;
+  --border: rgba(255, 255, 255, 0.1);
+  --border-strong: rgba(255, 255, 255, 0.2);
+  --text: #f5f5f2;
+  --text-secondary: rgba(245, 245, 242, 0.62);
+  --text-tertiary: rgba(245, 245, 242, 0.4);
+  --accent: #5fd9a8;
+  --danger: #e07a6b;
+  --radius: 14px;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI",
+    Roboto, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.5;
+}
+
+/* ---------- Экран входа ---------- */
+.screen {
+  min-height: 100svh;
+}
+
+#screen-login[hidden],
+#screen-editor[hidden] {
+  display: none;
+}
+
+#screen-login {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.login-box {
+  width: 100%;
+  max-width: 420px;
+}
+
+.login-box__title {
+  font-size: 1.7rem;
+  font-weight: 700;
+  margin: 0 0 8px;
+  letter-spacing: -0.01em;
+}
+
+.login-box__hint {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  margin: 0 0 28px;
+  line-height: 1.5;
+}
+
+.login-box__error {
+  color: var(--danger);
+  font-size: 0.88rem;
+  min-height: 1.2em;
+  margin: 10px 0 0;
+}
+
+.advanced {
+  margin: 4px 0 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 4px 16px;
+}
+
+.advanced summary {
+  cursor: pointer;
+  padding: 12px 0;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.advanced[open] summary {
+  padding-bottom: 4px;
+}
+
+.howto {
+  margin-top: 24px;
+  border-top: 1px solid var(--border);
+  padding-top: 16px;
+}
+
+.howto summary {
+  cursor: pointer;
+  font-size: 0.88rem;
+  color: var(--text-tertiary);
+}
+
+.howto ol {
+  margin: 14px 0 0;
+  padding-left: 20px;
+  color: var(--text-secondary);
+  font-size: 0.88rem;
+  line-height: 1.7;
+}
+
+.howto a {
+  color: var(--accent);
+}
+
+/* ---------- Общие элементы форм ---------- */
+.field {
+  display: block;
+  margin-bottom: 16px;
+}
+
+.field--inline {
+  max-width: 260px;
+}
+
+.field__label {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--text-tertiary);
+  margin-bottom: 6px;
+}
+
+.field__note {
+  font-size: 0.8rem;
+  color: var(--text-tertiary);
+  margin: 8px 0 0;
+  min-height: 1.2em;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="date"],
+input[type="password"],
+input[type="url"],
+textarea,
+select {
+  width: 100%;
+  padding: 12px 14px;
+  background: #1a1a1a;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text);
+  font-size: 1rem;
+  font-family: inherit;
+  transition: border-color 0.2s var(--ease);
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+textarea {
+  resize: vertical;
+  line-height: 1.5;
+}
+
+input[type="file"] {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+/* ---------- Кнопки ---------- */
+.btn {
+  appearance: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border-radius: 999px;
+  padding: 13px 22px;
+  transition: transform 0.15s var(--ease), opacity 0.15s var(--ease), background 0.2s var(--ease);
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+.btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.btn--primary {
+  background: var(--accent);
+  color: #06251a;
+  width: 100%;
+}
+
+.btn--secondary {
+  background: rgba(95, 217, 168, 0.14);
+  color: var(--accent);
+}
+
+.btn--ghost {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+}
+
+.btn--sm {
+  padding: 9px 16px;
+  font-size: 0.85rem;
+}
+
+.btn--dashed {
+  background: transparent;
+  border: 1.5px dashed var(--border-strong);
+  color: var(--text-secondary);
+  width: 100%;
+}
+
+.btn--remove {
+  background: transparent;
+  color: var(--danger);
+  padding: 8px 14px;
+  font-size: 0.85rem;
+}
+
+/* ---------- Топбар редактора ---------- */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: rgba(10, 10, 10, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+}
+
+.topbar__title {
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
+.topbar__actions {
+  display: flex;
+  gap: 10px;
+}
+
+/* ---------- Редактор ---------- */
+.editor {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 24px 20px 40px;
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 22px;
+  margin-bottom: 20px;
+}
+
+.panel__title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin: 0 0 18px;
+  letter-spacing: -0.005em;
+}
+
+.photo-row {
+  display: flex;
+  gap: 18px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.photo-preview {
+  width: 96px;
+  height: 96px;
+  object-fit: cover;
+  border-radius: 12px;
+  background: #1a1a1a;
+  border: 1px solid var(--border);
+  flex: none;
+}
+
+.photo-row__controls {
+  flex: 1 1 200px;
+  min-width: 200px;
+}
+
+.photo-row__controls input[type="file"] {
+  margin-bottom: 12px;
+}
+
+/* ---------- Динамические строки ---------- */
+.rows {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.row {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px 16px 6px;
+}
+
+.row__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 12px;
+}
+
+.row__grid .field--wide {
+  grid-column: 1 / -1;
+}
+
+/* ---------- Нижняя панель сохранения ---------- */
+.savebar {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 20px;
+  background: rgba(10, 10, 10, 0.9);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-top: 1px solid var(--border);
+}
+
+.savebar .btn--primary {
+  width: auto;
+  flex: none;
+}
+
+.savebar__status {
+  font-size: 0.85rem;
+  color: var(--text-tertiary);
+}
+
+.savebar__status--ok {
+  color: var(--accent);
+}
+
+.savebar__status--error {
+  color: var(--danger);
+}
+
+@media (max-width: 480px) {
+  .row__grid {
+    grid-template-columns: 1fr;
+  }
+}

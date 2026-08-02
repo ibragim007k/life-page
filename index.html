@@ -9,9 +9,15 @@
 </head>
 <body>
 
+  <!-- Фоновое фото на весь сайт: размытая версия видна под всеми секциями -->
+  <div class="bg-ambient" id="bg-ambient"></div>
+  <div class="bg-scrim"></div>
+
   <!-- ===================== HERO ===================== -->
   <section class="hero" id="hero">
-    <div class="hero__scrim"></div>
+    <div class="hero__photo-wrap">
+      <img class="hero__photo" id="hero-photo" alt="">
+    </div>
     <div class="hero__content">
       <h1 class="hero__name" id="hero-name"></h1>
       <p class="hero__tagline" id="hero-tagline"></p>
@@ -22,7 +28,7 @@
   <main>
 
     <!-- ===================== ПОЧЕМУ ===================== -->
-    <section class="section section--why" id="why">
+    <section class="section section--why reveal" id="why">
       <div class="container container--narrow">
         <h2 class="section__title" id="why-title"></h2>
         <div class="prose" id="why-text"></div>
@@ -30,20 +36,27 @@
     </section>
 
     <!-- ===================== ДОЛГИ ===================== -->
-    <section class="section section--debts" id="debts">
+    <section class="section section--debts reveal" id="debts">
       <div class="container">
         <h2 class="section__title">Долги</h2>
 
-        <div class="progress">
-          <div class="progress__numbers">
-            <span class="progress__paid" id="progress-paid"></span>
-            <span class="progress__of">из</span>
-            <span class="progress__goal" id="progress-goal"></span>
+        <div class="ring-card">
+          <div class="ring-wrap">
+            <svg class="ring" viewBox="0 0 152 152">
+              <circle class="ring__bg" cx="76" cy="76" r="64"></circle>
+              <circle class="ring__fill" id="ring-fill" cx="76" cy="76" r="64"></circle>
+            </svg>
+            <div class="ring__label">
+              <span class="ring__percent" id="ring-percent"></span>
+              <span class="ring__sub">отдано</span>
+            </div>
           </div>
-          <div class="progress__track">
-            <div class="progress__fill" id="progress-fill"></div>
+          <div class="ring-stats">
+            <span class="ring-stats__paid" id="ring-paid"></span>
+            <span class="ring-stats__of">из</span>
+            <span class="ring-stats__goal" id="ring-goal"></span>
+            <div class="ring-stats__note">Общий прогресс по всем долгам</div>
           </div>
-          <div class="progress__percent" id="progress-percent"></div>
         </div>
 
         <ul class="cards" id="debts-list"></ul>
@@ -51,7 +64,7 @@
     </section>
 
     <!-- ===================== ЦЕЛИ ===================== -->
-    <section class="section section--goals" id="goals">
+    <section class="section section--goals reveal" id="goals">
       <div class="container">
         <h2 class="section__title">Цели</h2>
         <ul class="cards" id="goals-list"></ul>
@@ -59,7 +72,7 @@
     </section>
 
     <!-- ===================== ОБНОВЛЕНИЯ ===================== -->
-    <section class="section section--updates" id="updates">
+    <section class="section section--updates reveal" id="updates">
       <div class="container container--narrow">
         <h2 class="section__title">Обновления</h2>
         <ul class="feed" id="updates-list"></ul>
@@ -91,8 +104,9 @@
     // ---- Hero ----
     document.getElementById("hero-name").textContent = SITE_DATA.hero.name;
     document.getElementById("hero-tagline").textContent = SITE_DATA.hero.tagline;
-    document.getElementById("hero").style.backgroundImage =
-      `linear-gradient(0deg, rgba(0,0,0,0.15), rgba(0,0,0,0.15)), url('${SITE_DATA.hero.backgroundImage}')`;
+    document.getElementById("hero-photo").src = SITE_DATA.hero.backgroundImage;
+    document.getElementById("bg-ambient").style.backgroundImage =
+      `url('${SITE_DATA.hero.backgroundImage}')`;
 
     // ---- Почему ----
     document.getElementById("why-title").textContent = SITE_DATA.why.title;
@@ -103,16 +117,24 @@
       whyText.appendChild(el);
     });
 
-    // ---- Долги: прогресс ----
+    // ---- Долги: круговой прогресс ----
     const { totalGoal, items: debtItems } = SITE_DATA.debts;
     const totalRemaining = debtItems.reduce((sum, d) => sum + d.remaining, 0);
     const totalPaid = Math.max(totalGoal - totalRemaining, 0);
     const percent = Math.min(Math.round((totalPaid / totalGoal) * 100), 100);
 
-    document.getElementById("progress-paid").textContent = fmtMoney(totalPaid);
-    document.getElementById("progress-goal").textContent = fmtMoney(totalGoal);
-    document.getElementById("progress-percent").textContent = `${percent}%`;
-    document.getElementById("progress-fill").style.width = `${percent}%`;
+    document.getElementById("ring-paid").textContent = fmtMoney(totalPaid);
+    document.getElementById("ring-goal").textContent = fmtMoney(totalGoal);
+    document.getElementById("ring-percent").textContent = `${percent}%`;
+
+    const ringFill = document.getElementById("ring-fill");
+    const ringRadius = 64;
+    const ringCircumference = 2 * Math.PI * ringRadius;
+    ringFill.style.strokeDasharray = `${ringCircumference}`;
+    ringFill.style.strokeDashoffset = `${ringCircumference}`;
+    requestAnimationFrame(() => {
+      ringFill.style.strokeDashoffset = `${ringCircumference * (1 - percent / 100)}`;
+    });
 
     // ---- Долги: карточки ----
     const debtsList = document.getElementById("debts-list");
@@ -174,6 +196,20 @@
       a.rel = "noopener noreferrer";
       footerLinks.appendChild(a);
     });
+
+    // ---- Плавное появление секций при прокрутке ----
+    const revealObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-visible");
+            revealObserver.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.12 }
+    );
+    document.querySelectorAll(".reveal").forEach((el) => revealObserver.observe(el));
   </script>
 </body>
 </html>

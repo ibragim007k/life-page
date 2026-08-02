@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Управление сайтом</title>
+<link rel="stylesheet" href="admin.css">
+</head>
+<body>
+
+  <!-- ===================== ЭКРАН ВХОДА ===================== -->
+  <div class="screen" id="screen-login">
+    <div class="login-box">
+      <h1 class="login-box__title">Управление сайтом</h1>
+      <p class="login-box__hint">Ключ доступа нужно ввести один раз на этом устройстве — дальше он останется в браузере.</p>
+
+      <label class="field">
+        <span class="field__label">Ключ доступа</span>
+        <input type="password" id="in-token" autocomplete="off" spellcheck="false">
+      </label>
+
+      <details class="advanced">
+        <summary>Дополнительные настройки</summary>
+        <label class="field">
+          <span class="field__label">Владелец репозитория</span>
+          <input type="text" id="in-owner" autocomplete="off" spellcheck="false">
+        </label>
+        <label class="field">
+          <span class="field__label">Название репозитория</span>
+          <input type="text" id="in-repo" autocomplete="off" spellcheck="false">
+        </label>
+        <label class="field">
+          <span class="field__label">Ветка</span>
+          <input type="text" id="in-branch" autocomplete="off" spellcheck="false" value="main">
+        </label>
+      </details>
+
+      <button class="btn btn--primary" id="btn-login">Открыть панель</button>
+      <p class="login-box__error" id="login-error"></p>
+
+      <details class="howto">
+        <summary>Где взять ключ доступа?</summary>
+        <ol>
+          <li>Открой <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">github.com/settings/personal-access-tokens/new</a></li>
+          <li>В поле «Repository access» выбери «Only select repositories» → укажи этот репозиторий</li>
+          <li>В «Permissions» → «Repository permissions» → «Contents» поставь «Read and write»</li>
+          <li>Нажми «Generate token» и скопируй ключ — он покажется один раз</li>
+        </ol>
+      </details>
+    </div>
+  </div>
+
+  <!-- ===================== ЭКРАН РЕДАКТИРОВАНИЯ ===================== -->
+  <div class="screen screen--editor" id="screen-editor" hidden>
+    <header class="topbar">
+      <span class="topbar__title">Управление сайтом</span>
+      <div class="topbar__actions">
+        <a class="btn btn--ghost btn--sm" id="link-view-site" href="index.html" target="_blank" rel="noopener">Открыть сайт</a>
+        <button class="btn btn--ghost btn--sm" id="btn-logout">Выйти</button>
+      </div>
+    </header>
+
+    <main class="editor">
+
+      <!-- Фото -->
+      <section class="panel">
+        <h2 class="panel__title">Фото на главной</h2>
+        <div class="photo-row">
+          <img id="photo-preview" class="photo-preview" alt="Текущее фото">
+          <div class="photo-row__controls">
+            <input type="file" id="in-photo-file" accept="image/*">
+            <button class="btn btn--secondary" id="btn-save-photo" disabled>Сохранить новое фото</button>
+            <p class="field__note" id="photo-status"></p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Шапка -->
+      <section class="panel">
+        <h2 class="panel__title">Имя и слоган</h2>
+        <label class="field">
+          <span class="field__label">Имя</span>
+          <input type="text" id="in-name">
+        </label>
+        <label class="field">
+          <span class="field__label">Слоган</span>
+          <input type="text" id="in-tagline">
+        </label>
+      </section>
+
+      <!-- Почему -->
+      <section class="panel">
+        <h2 class="panel__title">Почему я это делаю</h2>
+        <label class="field">
+          <span class="field__label">Заголовок</span>
+          <input type="text" id="in-why-title">
+        </label>
+        <label class="field">
+          <span class="field__label">Текст (каждая строка — отдельный абзац)</span>
+          <textarea id="in-why-text" rows="5"></textarea>
+        </label>
+      </section>
+
+      <!-- Долги -->
+      <section class="panel">
+        <h2 class="panel__title">Долги</h2>
+        <label class="field field--inline">
+          <span class="field__label">Общая цель, ₽</span>
+          <input type="number" id="in-total-goal" min="0" step="1">
+        </label>
+        <div class="rows" id="rows-debts"></div>
+        <button class="btn btn--dashed" id="btn-add-debt">+ Добавить долг</button>
+      </section>
+
+      <!-- Цели -->
+      <section class="panel">
+        <h2 class="panel__title">Цели</h2>
+        <div class="rows" id="rows-goals"></div>
+        <button class="btn btn--dashed" id="btn-add-goal">+ Добавить цель</button>
+      </section>
+
+      <!-- Обновления -->
+      <section class="panel">
+        <h2 class="panel__title">Лента обновлений</h2>
+        <div class="rows" id="rows-updates"></div>
+        <button class="btn btn--dashed" id="btn-add-update">+ Добавить запись</button>
+      </section>
+
+      <!-- Футер -->
+      <section class="panel">
+        <h2 class="panel__title">Ссылки в футере</h2>
+        <div class="rows" id="rows-links"></div>
+        <button class="btn btn--dashed" id="btn-add-link">+ Добавить ссылку</button>
+      </section>
+
+    </main>
+
+    <div class="savebar">
+      <span class="savebar__status" id="save-status"></span>
+      <button class="btn btn--primary" id="btn-save-all">Сохранить изменения</button>
+    </div>
+  </div>
+
+  <!-- Шаблоны строк -->
+  <template id="tpl-debt-row">
+    <div class="row">
+      <div class="row__grid">
+        <label class="field"><span class="field__label">Имя</span><input type="text" data-key="name"></label>
+        <label class="field"><span class="field__label">Статус</span>
+          <select data-key="status">
+            <option value="in_progress">В процессе</option>
+            <option value="closed">Закрыт</option>
+          </select>
+        </label>
+        <label class="field"><span class="field__label">Изначально, ₽</span><input type="number" min="0" step="1" data-key="amount"></label>
+        <label class="field"><span class="field__label">Осталось, ₽</span><input type="number" min="0" step="1" data-key="remaining"></label>
+        <label class="field"><span class="field__label">Срок</span><input type="date" data-key="dueDate"></label>
+      </div>
+      <button class="btn btn--remove" data-remove>Удалить</button>
+    </div>
+  </template>
+
+  <template id="tpl-goal-row">
+    <div class="row">
+      <div class="row__grid">
+        <label class="field"><span class="field__label">Название</span><input type="text" data-key="title"></label>
+        <label class="field"><span class="field__label">Категория</span>
+          <select data-key="category">
+            <option value="финансовая">финансовая</option>
+            <option value="личная">личная</option>
+          </select>
+        </label>
+        <label class="field field--wide"><span class="field__label">Описание</span><input type="text" data-key="description"></label>
+        <label class="field"><span class="field__label">К дате</span><input type="date" data-key="targetDate"></label>
+      </div>
+      <button class="btn btn--remove" data-remove>Удалить</button>
+    </div>
+  </template>
+
+  <template id="tpl-update-row">
+    <div class="row">
+      <div class="row__grid">
+        <label class="field"><span class="field__label">Дата</span><input type="date" data-key="dateInput"></label>
+        <label class="field field--wide"><span class="field__label">Запись</span><input type="text" data-key="text"></label>
+      </div>
+      <button class="btn btn--remove" data-remove>Удалить</button>
+    </div>
+  </template>
+
+  <template id="tpl-link-row">
+    <div class="row">
+      <div class="row__grid">
+        <label class="field"><span class="field__label">Название</span><input type="text" data-key="label"></label>
+        <label class="field field--wide"><span class="field__label">Ссылка</span><input type="url" data-key="url"></label>
+      </div>
+      <button class="btn btn--remove" data-remove>Удалить</button>
+    </div>
+  </template>
+
+  <script src="admin.js"></script>
+</body>
+</html>
