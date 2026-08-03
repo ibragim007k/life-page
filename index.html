@@ -13,6 +13,18 @@
   <div class="bg-ambient" id="bg-ambient"></div>
   <div class="bg-scrim"></div>
 
+  <!-- ===================== НАВИГАЦИЯ ===================== -->
+  <nav class="sitenav" id="sitenav">
+    <div class="sitenav__inner">
+      <a href="#debts">Долги</a>
+      <a href="#rewards">Награды</a>
+      <a href="#goals">Цели</a>
+      <a href="#qa">Вопросы</a>
+      <a href="#stories">Истории</a>
+      <a href="#updates">Обновления</a>
+    </div>
+  </nav>
+
   <!-- ===================== HERO ===================== -->
   <section class="hero" id="hero">
     <div class="hero__photo-wrap">
@@ -63,11 +75,40 @@
       </div>
     </section>
 
+    <!-- ===================== НАГРАДЫ ===================== -->
+    <section class="section section--rewards reveal" id="rewards">
+      <div class="container">
+        <h2 class="section__title">Награды за путь</h2>
+        <p class="section__lead">Маленькие подарки себе и близким за каждый пройденный отрезок.</p>
+        <ul class="cards" id="rewards-list"></ul>
+      </div>
+    </section>
+
     <!-- ===================== ЦЕЛИ ===================== -->
     <section class="section section--goals reveal" id="goals">
       <div class="container">
         <h2 class="section__title">Цели</h2>
         <ul class="cards" id="goals-list"></ul>
+      </div>
+    </section>
+
+    <!-- ===================== ВОПРОСЫ И ОТВЕТЫ ===================== -->
+    <section class="section section--qa reveal" id="qa">
+      <div class="container container--narrow">
+        <h2 class="section__title">Вопросы и ответы</h2>
+        <p class="section__lead">Что спрашивают читатели — и мои честные ответы.</p>
+        <ul class="qa-list" id="qa-list"></ul>
+        <a class="btn-cta" id="qa-cta" target="_blank" rel="noopener">Задать свой вопрос →</a>
+      </div>
+    </section>
+
+    <!-- ===================== ИСТОРИИ ЧИТАТЕЛЕЙ ===================== -->
+    <section class="section section--stories reveal" id="stories">
+      <div class="container container--narrow">
+        <h2 class="section__title">Истории читателей</h2>
+        <p class="section__lead">Если у тебя была похожая ситуация — расскажи, что помогло выбраться.</p>
+        <ul class="cards" id="stories-list"></ul>
+        <a class="btn-cta" id="stories-cta" target="_blank" rel="noopener">Поделиться своей историей →</a>
       </div>
     </section>
 
@@ -157,6 +198,23 @@
       debtsList.appendChild(li);
     });
 
+    // ---- Награды ----
+    const rewardsList = document.getElementById("rewards-list");
+    SITE_DATA.rewards.forEach((reward) => {
+      const li = document.createElement("li");
+      li.className = "card card--reward";
+      li.innerHTML = `
+        ${reward.photo ? `<img class="card__reward-photo" src="${reward.photo}" alt="">` : ""}
+        <div class="card__row">
+          <span class="card__category">${fmtMoney(reward.amount)} отдано</span>
+        </div>
+        <div class="card__goal-title">${reward.title}</div>
+        <p class="card__goal-desc">${reward.description}</p>
+        <div class="card__due">${fmtDate(reward.date)}</div>
+      `;
+      rewardsList.appendChild(li);
+    });
+
     // ---- Цели ----
     const goalsList = document.getElementById("goals-list");
     SITE_DATA.goals.forEach((goal) => {
@@ -171,6 +229,43 @@
         <div class="card__due">К ${fmtDate(goal.targetDate)}</div>
       `;
       goalsList.appendChild(li);
+    });
+
+    // ---- Вопросы и ответы ----
+    const qaList = document.getElementById("qa-list");
+    SITE_DATA.community.qa.forEach((item) => {
+      const li = document.createElement("li");
+      li.className = "qa-item";
+      li.innerHTML = `
+        <div class="qa-item__q">${item.question}</div>
+        <div class="qa-item__a">${item.answer}</div>
+      `;
+      qaList.appendChild(li);
+    });
+
+    // ---- Истории читателей ----
+    const storiesList = document.getElementById("stories-list");
+    SITE_DATA.community.stories.forEach((story) => {
+      const li = document.createElement("li");
+      li.className = "card card--story";
+      li.innerHTML = `
+        <div class="card__row">
+          <span class="card__name">${story.name}</span>
+          <span class="card__due">${story.date}</span>
+        </div>
+        <p class="card__goal-desc">${story.text}</p>
+      `;
+      storiesList.appendChild(li);
+    });
+
+    // ---- Кнопки-ссылки на форму сообщества ----
+    const formUrl = SITE_DATA.community.formUrl;
+    [document.getElementById("qa-cta"), document.getElementById("stories-cta")].forEach((btn) => {
+      if (formUrl) {
+        btn.href = formUrl;
+      } else {
+        btn.style.display = "none";
+      }
     });
 
     // ---- Обновления ----
@@ -210,6 +305,19 @@
       { threshold: 0.12 }
     );
     document.querySelectorAll(".reveal").forEach((el) => revealObserver.observe(el));
+
+    // ---- Навигация появляется после hero ----
+    const sitenav = document.getElementById("sitenav");
+    const heroEl = document.getElementById("hero");
+    const navObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          sitenav.classList.toggle("sitenav--visible", !entry.isIntersecting);
+        });
+      },
+      { threshold: 0.05 }
+    );
+    navObserver.observe(heroEl);
   </script>
 </body>
 </html>

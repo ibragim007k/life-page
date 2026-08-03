@@ -109,14 +109,11 @@ async function ghGetFile(path) {
 }
 
 async function ghPutFile(path, base64Content, sha, message) {
+  const body = { message, content: base64Content, branch: cfg.branch };
+  if (sha) body.sha = sha;
   return ghFetch(`contents/${path}`, {
     method: "PUT",
-    body: JSON.stringify({
-      message,
-      content: base64Content,
-      sha,
-      branch: cfg.branch,
-    }),
+    body: JSON.stringify(body),
   });
 }
 
@@ -144,6 +141,18 @@ function renderDataJs(d) {
     )
     .join("\n");
 
+  const rewards = d.rewards
+    .map(
+      (r) => `    {
+      title: ${j(r.title)},
+      description: ${j(r.description)},
+      amount: ${Number(r.amount) || 0},
+      date: ${j(r.date)},
+      photo: ${j(r.photo || "")},
+    },`
+    )
+    .join("\n");
+
   const goals = d.goals
     .map(
       (g) => `    {
@@ -152,6 +161,26 @@ function renderDataJs(d) {
       category: ${j(g.category)},
       targetDate: ${j(g.targetDate)},
     },`
+    )
+    .join("\n");
+
+  const qa = d.community.qa
+    .map(
+      (q) => `      {
+        question: ${j(q.question)},
+        answer: ${j(q.answer)},
+        date: ${j(q.date)},
+      },`
+    )
+    .join("\n");
+
+  const stories = d.community.stories
+    .map(
+      (s) => `      {
+        name: ${j(s.name)},
+        text: ${j(s.text)},
+        date: ${j(s.date)},
+      },`
     )
     .join("\n");
 
@@ -202,10 +231,28 @@ ${debts}
     ],
   },
 
+  // ---------- Награды за пройденный путь ----------
+  rewards: [
+${rewards}
+  ],
+
   // ---------- Цели ----------
   goals: [
 ${goals}
   ],
+
+  // ---------- Сообщество ----------
+  community: {
+    formUrl: ${j(d.community.formUrl)},
+
+    qa: [
+${qa}
+    ],
+
+    stories: [
+${stories}
+    ],
+  },
 
   // ---------- Лента обновлений ----------
   updates: [
@@ -252,6 +299,48 @@ function clearRows(containerId) {
   document.getElementById(containerId).innerHTML = "";
 }
 
+/* ---------------- Строка награды (с загрузкой фото) ---------------- */
+
+function addRewardRow(values) {
+  const tpl = document.getElementById("tpl-reward-row");
+  const node = tpl.content.firstElementChild.cloneNode(true);
+  node.querySelectorAll("[data-key]").forEach((input) => {
+    const key = input.dataset.key;
+    if (key in values) input.value = values[key];
+  });
+
+  const preview = node.querySelector("[data-photo-preview]");
+  const status = node.querySelector("[data-photo-status]");
+  const fileInput = node.querySelector("[data-photo-input]");
+  const hiddenPhoto = node.querySelector('[data-key="photo"]');
+
+  if (values.photo) {
+    preview.src = values.photo + "?t=" + Date.now();
+    preview.hidden = false;
+  }
+
+  fileInput.addEventListener("change", async () => {
+    const file = fileInput.files[0];
+    if (!file) return;
+    status.textContent = "Загружаю…";
+    try {
+      const base64 = await fileToBase64(file);
+      const path = `img/rewards/reward-${Date.now()}.jpg`;
+      await ghPutFile(path, base64, null, "Фото для награды");
+      hiddenPhoto.value = path;
+      preview.src = URL.createObjectURL(file);
+      preview.hidden = false;
+      status.textContent = "Фото загружено.";
+    } catch (err) {
+      status.textContent = "Ошибка: " + err.message;
+    }
+  });
+
+  node.querySelector("[data-remove]").addEventListener("click", () => node.remove());
+  document.getElementById("rows-rewards").appendChild(node);
+  return node;
+}
+
 /* ---------------- Заполнение формы данными ---------------- */
 
 function populateForm(d) {
@@ -266,8 +355,31 @@ function populateForm(d) {
   clearRows("rows-debts");
   d.debts.items.forEach((it) => addRow("rows-debts", "tpl-debt-row", it));
 
+  clearRows("rows-rewards");
+  d.rewards.forEach((r) => addRewardRow(r));
+
   clearRows("rows-goals");
   d.goals.forEach((g) => addRow("rows-goals", "tpl-goal-row", g));
+
+  els.inFormUrl.value = d.community.formUrl;
+
+  clearRows("rows-qa");
+  d.community.qa.forEach((q) =>
+    addRow("rows-qa", "tpl-qa-row", {
+      question: q.question,
+      answer: q.answer,
+      dateInput: ruToIso(q.date),
+    })
+  );
+
+  clearRows("rows-stories");
+  d.community.stories.forEach((s) =>
+    addRow("rows-stories", "tpl-story-row", {
+      name: s.name,
+      dateInput: ruToIso(s.date),
+      text: s.text,
+    })
+  );
 
   clearRows("rows-updates");
   d.updates.forEach((u) =>
@@ -295,7 +407,29 @@ function collectForm(previousData) {
       totalGoal: Number(els.inTotalGoal.value) || 0,
       items: readRows("rows-debts", ["name", "status", "amount", "remaining", "dueDate"]),
     },
+    rewards: readRows("rows-rewards", ["title", "description", "amount", "date", "photo"]).map(
+      (r) => ({
+        title: r.title,
+        description: r.description,
+        amount: Number(r.amount) || 0,
+        date: r.date,
+        photo: r.photo,
+      })
+    ),
     goals: readRows("rows-goals", ["title", "category", "description", "targetDate"]),
+    community: {
+      formUrl: els.inFormUrl.value.trim(),
+      qa: readRows("rows-qa", ["question", "answer", "dateInput"]).map((q) => ({
+        question: q.question,
+        answer: q.answer,
+        date: isoToRu(q.dateInput),
+      })),
+      stories: readRows("rows-stories", ["name", "dateInput", "text"]).map((s) => ({
+        name: s.name,
+        date: isoToRu(s.dateInput),
+        text: s.text,
+      })),
+    },
     updates: readRows("rows-updates", ["dateInput", "text"]).map((u) => ({
       date: isoToRu(u.dateInput),
       text: u.text,
@@ -382,12 +516,32 @@ els.btnAddDebt.addEventListener("click", () =>
   })
 );
 
+els.btnAddReward.addEventListener("click", () =>
+  addRewardRow({ title: "", description: "", amount: 0, date: "", photo: "" })
+);
+
 els.btnAddGoal.addEventListener("click", () =>
   addRow("rows-goals", "tpl-goal-row", {
     title: "",
     category: "личная",
     description: "",
     targetDate: "",
+  })
+);
+
+els.btnAddQa.addEventListener("click", () =>
+  addRow("rows-qa", "tpl-qa-row", {
+    question: "",
+    answer: "",
+    dateInput: new Date().toISOString().slice(0, 10),
+  })
+);
+
+els.btnAddStory.addEventListener("click", () =>
+  addRow("rows-stories", "tpl-story-row", {
+    name: "",
+    dateInput: new Date().toISOString().slice(0, 10),
+    text: "",
   })
 );
 

@@ -113,11 +113,42 @@
         <button class="btn btn--dashed" id="btn-add-debt">+ Добавить долг</button>
       </section>
 
+      <!-- Награды -->
+      <section class="panel">
+        <h2 class="panel__title">Награды за путь</h2>
+        <div class="rows" id="rows-rewards"></div>
+        <button class="btn btn--dashed" id="btn-add-reward">+ Добавить награду</button>
+      </section>
+
       <!-- Цели -->
       <section class="panel">
         <h2 class="panel__title">Цели</h2>
         <div class="rows" id="rows-goals"></div>
         <button class="btn btn--dashed" id="btn-add-goal">+ Добавить цель</button>
+      </section>
+
+      <!-- Сообщество -->
+      <section class="panel">
+        <h2 class="panel__title">Форма для вопросов и историй</h2>
+        <label class="field">
+          <span class="field__label">Ссылка на форму (Google Forms и т.п.)</span>
+          <input type="url" id="in-form-url" placeholder="https://forms.gle/...">
+        </label>
+        <p class="field__note">Читатели присылают вопросы и истории через эту форму. Здесь ниже — уже отобранные вручную ответы, которые появятся на сайте.</p>
+      </section>
+
+      <!-- Вопросы и ответы -->
+      <section class="panel">
+        <h2 class="panel__title">Вопросы и ответы</h2>
+        <div class="rows" id="rows-qa"></div>
+        <button class="btn btn--dashed" id="btn-add-qa">+ Добавить вопрос-ответ</button>
+      </section>
+
+      <!-- Истории читателей -->
+      <section class="panel">
+        <h2 class="panel__title">Истории читателей</h2>
+        <div class="rows" id="rows-stories"></div>
+        <button class="btn btn--dashed" id="btn-add-story">+ Добавить историю</button>
       </section>
 
       <!-- Обновления -->
@@ -156,6 +187,48 @@
         <label class="field"><span class="field__label">Изначально, ₽</span><input type="number" min="0" step="1" data-key="amount"></label>
         <label class="field"><span class="field__label">Осталось, ₽</span><input type="number" min="0" step="1" data-key="remaining"></label>
         <label class="field"><span class="field__label">Срок</span><input type="date" data-key="dueDate"></label>
+      </div>
+      <button class="btn btn--remove" data-remove>Удалить</button>
+    </div>
+  </template>
+
+  <template id="tpl-reward-row">
+    <div class="row">
+      <div class="row__grid">
+        <label class="field field--wide"><span class="field__label">Название награды</span><input type="text" data-key="title"></label>
+        <label class="field field--wide"><span class="field__label">Описание</span><input type="text" data-key="description"></label>
+        <label class="field"><span class="field__label">Отдано на сумму, ₽</span><input type="number" min="0" step="1" data-key="amount"></label>
+        <label class="field"><span class="field__label">Дата</span><input type="date" data-key="date"></label>
+      </div>
+      <div class="reward-photo">
+        <img class="reward-photo__preview" data-photo-preview hidden alt="">
+        <div class="reward-photo__controls">
+          <input type="file" accept="image/*" data-photo-input>
+          <span class="field__note" data-photo-status></span>
+        </div>
+        <input type="hidden" data-key="photo">
+      </div>
+      <button class="btn btn--remove" data-remove>Удалить</button>
+    </div>
+  </template>
+
+  <template id="tpl-qa-row">
+    <div class="row">
+      <div class="row__grid">
+        <label class="field field--wide"><span class="field__label">Вопрос</span><input type="text" data-key="question"></label>
+        <label class="field field--wide"><span class="field__label">Ответ</span><input type="text" data-key="answer"></label>
+        <label class="field"><span class="field__label">Дата</span><input type="date" data-key="dateInput"></label>
+      </div>
+      <button class="btn btn--remove" data-remove>Удалить</button>
+    </div>
+  </template>
+
+  <template id="tpl-story-row">
+    <div class="row">
+      <div class="row__grid">
+        <label class="field"><span class="field__label">Имя (или «Аноним»)</span><input type="text" data-key="name"></label>
+        <label class="field"><span class="field__label">Дата</span><input type="date" data-key="dateInput"></label>
+        <label class="field field--wide"><span class="field__label">История</span><input type="text" data-key="text"></label>
       </div>
       <button class="btn btn--remove" data-remove>Удалить</button>
     </div>
