@@ -113,11 +113,12 @@
         <button class="btn btn--dashed" id="btn-add-debt">+ Добавить долг</button>
       </section>
 
-      <!-- Награды -->
+      <!-- Достижения -->
       <section class="panel">
-        <h2 class="panel__title">Награды за путь</h2>
-        <div class="rows" id="rows-rewards"></div>
-        <button class="btn btn--dashed" id="btn-add-reward">+ Добавить награду</button>
+        <h2 class="panel__title">Достижения</h2>
+        <p class="field__note">Фото, покупка или просто повод для гордости. Сумма — по желанию, если её не указать, бейдж с деньгами на сайте не появится.</p>
+        <div class="rows" id="rows-achievements"></div>
+        <button class="btn btn--dashed" id="btn-add-achievement">+ Добавить достижение</button>
       </section>
 
       <!-- Цели -->
@@ -192,17 +193,17 @@
     </div>
   </template>
 
-  <template id="tpl-reward-row">
+  <template id="tpl-achievement-row">
     <div class="row">
       <div class="row__grid">
-        <label class="field field--wide"><span class="field__label">Название награды</span><input type="text" data-key="title"></label>
+        <label class="field field--wide"><span class="field__label">Название</span><input type="text" data-key="title"></label>
         <label class="field field--wide"><span class="field__label">Описание</span><input type="text" data-key="description"></label>
-        <label class="field"><span class="field__label">Отдано на сумму, ₽</span><input type="number" min="0" step="1" data-key="amount"></label>
+        <label class="field"><span class="field__label">Сумма, ₽ (необязательно)</span><input type="number" min="0" step="1" data-key="amount"></label>
         <label class="field"><span class="field__label">Дата</span><input type="date" data-key="date"></label>
       </div>
-      <div class="reward-photo">
-        <img class="reward-photo__preview" data-photo-preview hidden alt="">
-        <div class="reward-photo__controls">
+      <div class="achievement-photo">
+        <img class="achievement-photo__preview" data-photo-preview hidden alt="">
+        <div class="achievement-photo__controls">
           <input type="file" accept="image/*" data-photo-input>
           <span class="field__note" data-photo-status></span>
         </div>

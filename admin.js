@@ -141,7 +141,7 @@ function renderDataJs(d) {
     )
     .join("\n");
 
-  const rewards = d.rewards
+  const achievements = d.achievements
     .map(
       (r) => `    {
       title: ${j(r.title)},
@@ -231,9 +231,9 @@ ${debts}
     ],
   },
 
-  // ---------- Награды за пройденный путь ----------
-  rewards: [
-${rewards}
+  // ---------- Достижения ----------
+  achievements: [
+${achievements}
   ],
 
   // ---------- Цели ----------
@@ -299,10 +299,10 @@ function clearRows(containerId) {
   document.getElementById(containerId).innerHTML = "";
 }
 
-/* ---------------- Строка награды (с загрузкой фото) ---------------- */
+/* ---------------- Строка достижения (с загрузкой фото) ---------------- */
 
-function addRewardRow(values) {
-  const tpl = document.getElementById("tpl-reward-row");
+function addAchievementRow(values) {
+  const tpl = document.getElementById("tpl-achievement-row");
   const node = tpl.content.firstElementChild.cloneNode(true);
   node.querySelectorAll("[data-key]").forEach((input) => {
     const key = input.dataset.key;
@@ -325,8 +325,8 @@ function addRewardRow(values) {
     status.textContent = "Загружаю…";
     try {
       const base64 = await fileToBase64(file);
-      const path = `img/rewards/reward-${Date.now()}.jpg`;
-      await ghPutFile(path, base64, null, "Фото для награды");
+      const path = `img/achievements/achievement-${Date.now()}.jpg`;
+      await ghPutFile(path, base64, null, "Фото для достижения");
       hiddenPhoto.value = path;
       preview.src = URL.createObjectURL(file);
       preview.hidden = false;
@@ -337,7 +337,7 @@ function addRewardRow(values) {
   });
 
   node.querySelector("[data-remove]").addEventListener("click", () => node.remove());
-  document.getElementById("rows-rewards").appendChild(node);
+  document.getElementById("rows-achievements").appendChild(node);
   return node;
 }
 
@@ -355,8 +355,8 @@ function populateForm(d) {
   clearRows("rows-debts");
   d.debts.items.forEach((it) => addRow("rows-debts", "tpl-debt-row", it));
 
-  clearRows("rows-rewards");
-  d.rewards.forEach((r) => addRewardRow(r));
+  clearRows("rows-achievements");
+  d.achievements.forEach((r) => addAchievementRow(r));
 
   clearRows("rows-goals");
   d.goals.forEach((g) => addRow("rows-goals", "tpl-goal-row", g));
@@ -407,7 +407,7 @@ function collectForm(previousData) {
       totalGoal: Number(els.inTotalGoal.value) || 0,
       items: readRows("rows-debts", ["name", "status", "amount", "remaining", "dueDate"]),
     },
-    rewards: readRows("rows-rewards", ["title", "description", "amount", "date", "photo"]).map(
+    achievements: readRows("rows-achievements", ["title", "description", "amount", "date", "photo"]).map(
       (r) => ({
         title: r.title,
         description: r.description,
@@ -516,8 +516,8 @@ els.btnAddDebt.addEventListener("click", () =>
   })
 );
 
-els.btnAddReward.addEventListener("click", () =>
-  addRewardRow({ title: "", description: "", amount: 0, date: "", photo: "" })
+els.btnAddAchievement.addEventListener("click", () =>
+  addAchievementRow({ title: "", description: "", amount: 0, date: "", photo: "" })
 );
 
 els.btnAddGoal.addEventListener("click", () =>

@@ -17,7 +17,7 @@
   <nav class="sitenav" id="sitenav">
     <div class="sitenav__inner">
       <a href="#debts">Долги</a>
-      <a href="#rewards">Награды</a>
+      <a href="#achievements">Достижения</a>
       <a href="#goals">Цели</a>
       <a href="#qa">Вопросы</a>
       <a href="#stories">Истории</a>
@@ -76,11 +76,11 @@
     </section>
 
     <!-- ===================== НАГРАДЫ ===================== -->
-    <section class="section section--rewards reveal" id="rewards">
+    <section class="section section--achievements reveal" id="achievements">
       <div class="container">
-        <h2 class="section__title">Награды за путь</h2>
-        <p class="section__lead">Маленькие подарки себе и близким за каждый пройденный отрезок.</p>
-        <ul class="cards" id="rewards-list"></ul>
+        <h2 class="section__title">Достижения</h2>
+        <p class="section__lead">Фото и истории о том, что удалось сделать за это время — не только про деньги.</p>
+        <ul class="cards" id="achievements-list"></ul>
       </div>
     </section>
 
@@ -146,6 +146,7 @@
     document.getElementById("hero-name").textContent = SITE_DATA.hero.name;
     document.getElementById("hero-tagline").textContent = SITE_DATA.hero.tagline;
     document.getElementById("hero-photo").src = SITE_DATA.hero.backgroundImage;
+    document.getElementById("hero-photo").alt = SITE_DATA.hero.name;
     document.getElementById("bg-ambient").style.backgroundImage =
       `url('${SITE_DATA.hero.backgroundImage}')`;
 
@@ -198,21 +199,23 @@
       debtsList.appendChild(li);
     });
 
-    // ---- Награды ----
-    const rewardsList = document.getElementById("rewards-list");
-    SITE_DATA.rewards.forEach((reward) => {
+    // ---- Достижения ----
+    const achievementsList = document.getElementById("achievements-list");
+    SITE_DATA.achievements.forEach((achievement) => {
       const li = document.createElement("li");
-      li.className = "card card--reward";
+      li.className = "card card--achievement";
       li.innerHTML = `
-        ${reward.photo ? `<img class="card__reward-photo" src="${reward.photo}" alt="">` : ""}
-        <div class="card__row">
-          <span class="card__category">${fmtMoney(reward.amount)} отдано</span>
-        </div>
-        <div class="card__goal-title">${reward.title}</div>
-        <p class="card__goal-desc">${reward.description}</p>
-        <div class="card__due">${fmtDate(reward.date)}</div>
+        ${achievement.photo ? `<img class="card__achievement-photo" src="${achievement.photo}" alt="${achievement.title}">` : ""}
+        ${
+          achievement.amount
+            ? `<div class="card__row"><span class="card__category">${fmtMoney(achievement.amount)} отдано</span></div>`
+            : ""
+        }
+        <div class="card__goal-title">${achievement.title}</div>
+        <p class="card__goal-desc">${achievement.description}</p>
+        <div class="card__due">${fmtDate(achievement.date)}</div>
       `;
-      rewardsList.appendChild(li);
+      achievementsList.appendChild(li);
     });
 
     // ---- Цели ----

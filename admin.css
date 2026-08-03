@@ -326,14 +326,14 @@ input[type="file"] {
   grid-column: 1 / -1;
 }
 
-.reward-photo {
+.achievement-photo {
   display: flex;
   align-items: center;
   gap: 12px;
   margin: 4px 0 14px;
 }
 
-.reward-photo__preview {
+.achievement-photo__preview {
   width: 56px;
   height: 56px;
   object-fit: cover;
@@ -342,12 +342,12 @@ input[type="file"] {
   flex: none;
 }
 
-.reward-photo__controls {
+.achievement-photo__controls {
   flex: 1;
   min-width: 0;
 }
 
-.reward-photo__controls input[type="file"] {
+.achievement-photo__controls input[type="file"] {
   font-size: 0.82rem;
   max-width: 100%;
 }

@@ -3,8 +3,8 @@
    ========================================================== */
 :root {
   --bg: #0a0a0a;
-  --panel: rgba(10, 10, 10, 0.58);
-  --panel-blur: 26px;
+  --panel: rgba(8, 8, 8, 0.8);
+  --panel-blur: 30px;
   --card-bg: rgba(255, 255, 255, 0.045);
   --card-border: rgba(255, 255, 255, 0.09);
   --card-border-strong: rgba(255, 255, 255, 0.16);
@@ -58,7 +58,7 @@ body {
   background-size: cover;
   background-position: center;
   transform: scale(1.3);
-  filter: blur(50px) saturate(1.25) brightness(0.7);
+  filter: blur(56px) saturate(1.15) brightness(0.55);
 }
 
 .bg-scrim {
@@ -67,9 +67,9 @@ body {
   z-index: -1;
   background: linear-gradient(
     180deg,
-    rgba(0, 0, 0, 0.15) 0%,
-    rgba(5, 5, 5, 0.4) 45%,
-    rgba(3, 3, 3, 0.6) 100%
+    rgba(0, 0, 0, 0.25) 0%,
+    rgba(4, 4, 4, 0.55) 45%,
+    rgba(2, 2, 2, 0.75) 100%
   );
 }
 
@@ -469,7 +469,7 @@ body {
   line-height: 1.6;
 }
 
-.card__reward-photo {
+.card__achievement-photo {
   display: block;
   width: 100%;
   aspect-ratio: 4 / 3;
