@@ -234,9 +234,11 @@ input[type="file"] {
   top: 0;
   z-index: 10;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 20px;
+  row-gap: 10px;
+  padding: 14px 20px;
   background: rgba(10, 10, 10, 0.85);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
@@ -246,11 +248,14 @@ input[type="file"] {
 .topbar__title {
   font-weight: 700;
   font-size: 1.05rem;
+  white-space: nowrap;
 }
 
 .topbar__actions {
   display: flex;
-  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
 }
 
 /* ---------- Редактор ---------- */
